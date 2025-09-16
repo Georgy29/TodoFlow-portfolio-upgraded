@@ -1,70 +1,91 @@
-# Flask Todo API
+# Fullstack PingPong (Flask + React)
 
-Мини-бэкенд на Flask + SQLite для CRUD (todo-list).
+Учебный fullstack-проект: бэкенд на **Flask + SQLite + JWT**, фронтенд на **React (Vite)**.
+
+---
 
 ## 🚀 Запуск локально
 
-1. Установи зависимости (рекомендуется через виртуальное окружение):
+### Бэкенд (Flask API)
+
+1. Установи зависимости (лучше в виртуальном окружении):
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate   # Linux / macOS
-venv\Scripts\activate      # Windows PowerShell
+cd api
+python3 -m venv .venv
+source .venv/bin/activate   # Linux / macOS
+.venv\Scripts\activate    # Windows PowerShell
 
 pip install -r requirements.txt
 ```
 
-2. Убедись, что структура проекта такая:
-```
-backend/
-  ├─ app.py          # основной файл Flask
-  ├─ models.py       # модель Todo
-  ├─ db.py           # SQLAlchemy init
-  ├─ requirements.txt
-```
-
-3. Запусти сервер разработки:
+2. Пересоздай БД (для dev):
 
 ```bash
-python app.py
+rm -f todos.db
+export JWT_SECRET_KEY=dev   # Linux / macOS
+set JWT_SECRET_KEY=dev      # Windows PowerShell
+cd ..
+python -m api.app
+```
+API поднимется на `http://localhost:5000`.
+
+### Фронтенд (React + Vite)
+
+```bash
+cd client
+npm install
+npm run dev -- --host
 ```
 
-По умолчанию API будет доступен на `http://localhost:5000`.
+По умолчанию фронт откроется на `http://localhost:5173`.
 
 ---
 
-## 🔗 Доступные эндпоинты
+## 🔗 Основные эндпоинты API
 
 - `GET /api/ping` → проверка ("pong")  
-- `GET /api/todos` → список всех задач  
-- `POST /api/todos` → создать задачу (JSON: `{ "title": "text" }`)  
-- `PATCH /api/todos/<id>` → переключить статус done  
+- `POST /api/auth/register` → регистрация (JSON: `{ "email": "...", "password": "..." }`)  
+- `POST /api/auth/login` → логин (вернёт JWT-токен)  
+- `GET /api/me` → текущий пользователь (требует токен)  
+- `GET /api/todos` → список задач (только свои, с токеном)  
+- `POST /api/todos` → создать задачу (JSON: `{ "title": "..." }`)  
+- `PATCH /api/todos/<id>` → переключить done  
 - `DELETE /api/todos/<id>` → удалить задачу  
 
 ---
 
 ## 🌐 Деплой
 
-### Render / Railway / Heroku (пример Render):
+### Бэкенд (Render)
 1. Создай новый **Web Service**.  
-2. В настройках укажи:
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn app:create_app()`
-3. Настрой `Environment`:
+2. Укажи:
+   - **Build Command**: `pip install -r api/requirements.txt`
+   - **Start Command**: `gunicorn api.app:create_app()`
+3. Переменные окружения:
    - `PYTHON_VERSION=3.11`
-   - `PORT=5000` (Render сам пробросит переменную)
-4. После билда API будет доступен по адресу:  
+   - `JWT_SECRET_KEY=<случайная строка>`
+   - `FRONTEND_ORIGIN=https://<твой-netlify>.app`
+4. После билда API доступен по адресу:  
    ```
-   https://<your-app>.onrender.com/api/todos
+   https://<your-app>.onrender.com/api/ping
    ```
+
+### Фронтенд (Netlify)
+1. В настройках укажи:
+   - **Base directory**: `client`
+   - **Build command**: `npm run build`
+   - **Publish directory**: `client/dist`
+2. Переменные окружения:
+   - `VITE_API_BASE=https://<your-backend>.onrender.com`
 
 ---
 
 ## 🛠 Примечания
 
-- В `app.py` включён `CORS(app)`, так что фронтенд на другом домене сможет обращаться к API.  
-- Для продакшна лучше ограничить разрешённые origin:
-  ```python
-  CORS(app, origins=["https://my-frontend.com"])
+- В dev-режиме CORS открыт для всех, в проде лучше ограничить через `FRONTEND_ORIGIN`.  
+- SQLite удобен локально, но на Render база может сбрасываться → используй Postgres для боевых данных.  
+- Все запросы к защищённым эндпоинтам должны содержать заголовок:
   ```
-- SQLite отлично подходит для локалки, но на хостингах база может сбрасываться → лучше подключить Postgres.
+  Authorization: Bearer <токен>
+  ```
