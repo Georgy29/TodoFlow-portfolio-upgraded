@@ -11,7 +11,9 @@
 👉 В результате фронт становится чище: вместо длинных fetch с повторяющимися настройками мы пишем короткие вызовы apiFetch('/api/todos'), и всё остальное происходит автоматически.
 
 */
-const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:5000';
+const API_BASE = import.meta.env.PROD
+  ? import.meta.env.VITE_API_BASE    // прод: Render
+  : '';                               // dev: ходим на /api -> прокси 1
 
 export function getToken() {
   return localStorage.getItem('token') || '';
