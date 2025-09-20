@@ -1,7 +1,9 @@
 import { useEffect, useLayoutEffect, useState } from "react"
 import { apiFetch, setToken } from "../api"
+import { useNavigate } from "react-router-dom"
 
 export default function TodosPage() {
+  const navigate = useNavigate()
   const [msg, setMsg] = useState("...")
   const [todos, setTodos] = useState([])
   const [title, setTitle] = useState("")
@@ -87,8 +89,7 @@ export default function TodosPage() {
         setError(`Couldn't update: ${failed.length} из ${results.length}`)
     }
     }
-
-    const navigate = useNavigate();
+  
       const logout = () => {
         setToken("")
         navigate("/login", { replace: true })
