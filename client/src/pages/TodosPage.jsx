@@ -88,12 +88,11 @@ export default function TodosPage() {
     }
     }
 
-
-
-  const logout = () => {
-    setToken("")
-    window.location.assign("/login")
-  }
+    const navigate = useNavigate();
+      const logout = () => {
+        setToken("")
+        navigate("/login", { replace: true })
+      }
 
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif", maxWidth: 640, margin: "0 auto" }}>
