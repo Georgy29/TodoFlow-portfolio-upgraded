@@ -1,6 +1,8 @@
-import { useEffect, useLayoutEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { apiFetch, setToken } from "../api"
 import { useNavigate } from "react-router-dom"
+import Navbar from "../components/Navbar"
+
 
 export default function TodosPage() {
   const navigate = useNavigate()
@@ -9,7 +11,12 @@ export default function TodosPage() {
   const [title, setTitle] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [filter, setFilter] = useState("all") // all | active | done
 
+  const activeCount = useMemo(() => todos.filter(t => !t.done).length, [todos])
+  const doneCount   = todos.length - activeCount
+
+  
   const ping = async () => {
     const res = await apiFetch("/api/ping")
     const t = await res.text()
@@ -58,6 +65,12 @@ export default function TodosPage() {
     setTodos(v => v.filter(t => t.id !== id))
   }
 
+  const computedTodos = useMemo(() => {
+    if (filter === "active") return todos.filter(t => !t.done);
+    if (filter === "done")   return todos.filter(t => t.done);
+    return todos;
+  }, [todos, filter]);
+
   // бонус: отметить все как выполненные (клиентом по одному PATCH)
   const markAllDone = async () => {
     setError("")
@@ -99,11 +112,40 @@ export default function TodosPage() {
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif", maxWidth: 640, margin: "0 auto" }}>
       <h1>Mini Full-Stack (JWT)</h1>
 
-      <div style={{display:"flex", gap:8, alignItems:"center"}}>
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <button onClick={ping}>Ping API</button>
         <p>Response: {msg}</p>
-        <button onClick={markAllDone}>Mark all done</button>
-        <button onClick={logout} style={{ marginLeft: "auto" }}>Logout</button>
+
+        <button onClick={markAllDone} disabled={!activeCount}>
+          Mark all done
+        </button>
+
+        {/* панель фильтров справа */}
+        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+          <button
+            onClick={() => setFilter("all")}
+            aria-pressed={filter === "all"}
+            style={{ fontWeight: filter === "all" ? 700 : 400 }}
+          >
+            All ({todos.length})
+          </button>
+          <button
+            onClick={() => setFilter("active")}
+            aria-pressed={filter === "active"}
+            style={{ fontWeight: filter === "active" ? 700 : 400 }}
+          >
+            Active ({activeCount})
+          </button>
+          <button
+            onClick={() => setFilter("done")}
+            aria-pressed={filter === "done"}
+            style={{ fontWeight: filter === "done" ? 700 : 400 }}
+          >
+            Done ({doneCount})
+          </button>
+        </div>
+
+        <button onClick={logout}>Logout</button>
       </div>
 
       <form onSubmit={addTodo} style={{ margin: "16px 0" }}>
@@ -119,17 +161,26 @@ export default function TodosPage() {
       </form>
 
       {loading && <p>Loading…</p>}
-      {error && <p style={{color:"crimson"}}>Error: {error}</p>}
+      {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
 
-      <ul style={{ listStyle:"none", padding:0 }}>
-        {todos.map(t => (
-          <li key={t.id} style={{ display:"flex", alignItems:"center", gap:8, borderBottom:"1px solid #eee", padding:"8px 0" }}>
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {computedTodos.map(t => (
+          <li key={t.id} style={{ display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid #eee", padding: "8px 0" }}>
             <input type="checkbox" checked={t.done} onChange={() => toggle(t.id)} />
-            <span style={{ flex:1, textDecoration: t.done ? "line-through" : "none" }}>{t.title}</span>
+            <span style={{ flex: 1, textDecoration: t.done ? "line-through" : "none" }}>{t.title}</span>
             <button onClick={() => remove(t.id)}>Delete</button>
           </li>
         ))}
       </ul>
+
+      {!loading && computedTodos.length === 0 && (
+        <p style={{ color: "#666" }}>
+          {filter === "done" ? "You have 0 completed tasks" :
+          filter === "active" ? "All tasks are completed" :
+          "No tasks yet. Add your first task!"}
+        </p>
+      )}
     </div>
   )
 }
+

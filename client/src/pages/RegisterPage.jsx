@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { apiFetch, setToken } from "../api"
+import Navbar from "../components/Navbar"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")

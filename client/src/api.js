@@ -24,16 +24,22 @@ export function setToken(token) {
   else localStorage.removeItem('token');
 }
 
-export function apiFetch(path, opts = {}) {
+export async function apiFetch(path, opts = {}) {
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
   const headers = { ...(opts.headers || {}) };
 
   const token = getToken();
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (opts.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
 
-  if (opts.body && !headers['Content-Type']) {
-    headers['Content-Type'] = 'application/json';
+  const res = await fetch(url, { ...opts, headers });
+
+  // Глобальный авто-логаут на 401
+  if (res.status === 401) {
+    setToken('');
+    if (!location.pathname.startsWith('/login')) {
+      window.location.assign('/login'); // в api.js нельзя useNavigate
+    }
   }
-
-  return fetch(url, { ...opts, headers });
+  return res;
 }
