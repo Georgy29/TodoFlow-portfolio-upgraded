@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react"
 import { apiFetch, setToken } from "../api"
 import { useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
+import TodoList from "../components/TodoList"
+
 
 
 export default function TodosPage() {
@@ -102,85 +104,74 @@ export default function TodosPage() {
         setError(`Couldn't update: ${failed.length} из ${results.length}`)
     }
     }
-  
-      const logout = () => {
-        setToken("")
-        navigate("/login", { replace: true })
-      }
 
   return (
-    <div style={{ padding: 24, fontFamily: "system-ui, sans-serif", maxWidth: 640, margin: "0 auto" }}>
-      <h1>Mini Full-Stack (JWT)</h1>
+    <>
+      <Navbar />
+      <div style={{ padding: 24, fontFamily: "system-ui, sans-serif", maxWidth: 640, margin: "0 auto" }}>
+        <h1>Mini Full-Stack (JWT)</h1>
 
-      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-        <button onClick={ping}>Ping API</button>
-        <p>Response: {msg}</p>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <button onClick={ping}>Ping API</button>
+          <p>Response: {msg}</p>
 
-        <button onClick={markAllDone} disabled={!activeCount}>
-          Mark all done
-        </button>
+          <button onClick={markAllDone} disabled={!activeCount}>
+            Mark all done
+          </button>
 
-        {/* панель фильтров справа */}
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          <button
-            onClick={() => setFilter("all")}
-            aria-pressed={filter === "all"}
-            style={{ fontWeight: filter === "all" ? 700 : 400 }}
-          >
-            All ({todos.length})
-          </button>
-          <button
-            onClick={() => setFilter("active")}
-            aria-pressed={filter === "active"}
-            style={{ fontWeight: filter === "active" ? 700 : 400 }}
-          >
-            Active ({activeCount})
-          </button>
-          <button
-            onClick={() => setFilter("done")}
-            aria-pressed={filter === "done"}
-            style={{ fontWeight: filter === "done" ? 700 : 400 }}
-          >
-            Done ({doneCount})
-          </button>
+          {/* панель фильтров справа */}
+          <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+            <button
+              onClick={() => setFilter("all")}
+              aria-pressed={filter === "all"}
+              style={{ fontWeight: filter === "all" ? 700 : 400 }}
+            >
+              All ({todos.length})
+            </button>
+            <button
+              onClick={() => setFilter("active")}
+              aria-pressed={filter === "active"}
+              style={{ fontWeight: filter === "active" ? 700 : 400 }}
+            >
+              Active ({activeCount})
+            </button>
+            <button
+              onClick={() => setFilter("done")}
+              aria-pressed={filter === "done"}
+              style={{ fontWeight: filter === "done" ? 700 : 400 }}
+            >
+              Done ({doneCount})
+            </button>
+          </div>
         </div>
 
-        <button onClick={logout}>Logout</button>
-      </div>
+        <form onSubmit={addTodo} style={{ margin: "16px 0" }}>
+          <input
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            placeholder="New todo..."
+            style={{ padding: 8, width: "70%" }}
+          />
+          <button type="submit" disabled={!title.trim()} style={{ padding: 8, marginLeft: 8 }}>
+            Add
+          </button>
+        </form>
 
-      <form onSubmit={addTodo} style={{ margin: "16px 0" }}>
-        <input
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          placeholder="New todo..."
-          style={{ padding: 8, width: "70%" }}
+        {loading && <p>Loading…</p>}
+        {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
+
+        <TodoList
+          items={computedTodos}
+          onToggle={toggle}
+          onRemove={remove}
+          emptyText={
+            filter === "done" ? "You have 0 completed tasks" :
+            filter === "active" ? "All tasks are completed" :
+            "No tasks yet. Add your first task!"
+          }
         />
-        <button type="submit" disabled={!title.trim()} style={{ padding: 8, marginLeft: 8 }}>
-          Add
-        </button>
-      </form>
-
-      {loading && <p>Loading…</p>}
-      {error && <p style={{ color: "crimson" }}>Error: {error}</p>}
-
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        {computedTodos.map(t => (
-          <li key={t.id} style={{ display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid #eee", padding: "8px 0" }}>
-            <input type="checkbox" checked={t.done} onChange={() => toggle(t.id)} />
-            <span style={{ flex: 1, textDecoration: t.done ? "line-through" : "none" }}>{t.title}</span>
-            <button onClick={() => remove(t.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-
-      {!loading && computedTodos.length === 0 && (
-        <p style={{ color: "#666" }}>
-          {filter === "done" ? "You have 0 completed tasks" :
-          filter === "active" ? "All tasks are completed" :
-          "No tasks yet. Add your first task!"}
-        </p>
-      )}
-    </div>
+      </div>
+    </>
   )
 }
 
