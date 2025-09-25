@@ -30,6 +30,8 @@ export default function RegisterPage() {
   }
 
   return (
+    <>
+    <Navbar />
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif", maxWidth: 640, margin: "0 auto" }}>
       <h1>Register</h1>
       {error && <p style={{ color: "crimson" }}>{error}</p>}
@@ -60,5 +62,6 @@ export default function RegisterPage() {
         Already got an account? <Link to="/login">Login</Link>
       </p>
     </div>
+    </>
   )
 }
