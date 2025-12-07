@@ -10,3 +10,4 @@ api/instance/
 client/node_modules/
 client/dist/
 .env*.vscode/
+.vscode/
