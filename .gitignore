@@ -9,5 +9,5 @@ api/instance/
 # Node
 client/node_modules/
 client/dist/
-.env*.vscode/
+.env*
 .vscode/
