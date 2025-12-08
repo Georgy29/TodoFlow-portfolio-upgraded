@@ -23,7 +23,29 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // React best practices
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+
+      // Common mistakes
+      'no-unused-vars': [
+        'error',
+        {
+          varsIgnorePattern: '^[A-Z_]',
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-debugger': 'warn',
+      'no-alert': 'warn',
+
+      // Code quality
+      'prefer-const': 'error',
+      'no-var': 'error',
+      'object-shorthand': 'warn',
+      'prefer-arrow-callback': 'warn',
     },
   },
 ])

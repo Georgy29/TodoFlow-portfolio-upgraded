@@ -1,18 +1,18 @@
-import { createRoot } from "react-dom/client"
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { getToken } from "./api"
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { getToken } from './api'
 
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import TodosPage from './pages/TodosPage'
 
-import LoginPage from "./pages/LoginPage"
-import RegisterPage from "./pages/RegisterPage"
-import TodosPage from "./pages/TodosPage"
-
-function PrivateRoute({ children }) {
+// Export for fast refresh
+export function PrivateRoute({ children }) {
   const authed = !!getToken()
   return authed ? children : <Navigate to="/login" replace />
 }
 
-createRoot(document.getElementById("root")).render(
+createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<Navigate to="/todos" replace />} />
