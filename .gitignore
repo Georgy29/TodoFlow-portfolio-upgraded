@@ -9,5 +9,13 @@ api/instance/
 # Node
 client/node_modules/
 client/dist/
-.env*
+# Environment files (but keep .env.example)
+.env
+.env.local
+.env.production
+.env.development
 .vscode/
+
+# Documentation (local only, don't commit)
+ANALYSIS.md
+QUICK_START_PLAN.md

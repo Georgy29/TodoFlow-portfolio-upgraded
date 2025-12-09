@@ -19,11 +19,22 @@ source .venv/bin/activate   # Linux / macOS
 pip install -r requirements.txt
 ```
 
-2. Пересоздай БД (для dev):
+2. Настрой переменные окружения (опционально):
+
+```bash
+# Скопируй пример файла
+cp .env.example .env.local
+
+# Отредактируй .env.local и добавь свои значения:
+# JWT_SECRET_KEY=your-secret-key-here
+# FRONTEND_ORIGIN=http://localhost:5173
+```
+
+3. Пересоздай БД (для dev):
 
 ```bash
 rm -f todos.db
-export JWT_SECRET_KEY=dev   # Linux / macOS
+export JWT_SECRET_KEY=dev   # Linux / macOS (или используй .env.local)
 set JWT_SECRET_KEY=dev      # Windows PowerShell
 cd ..
 python -m api.app
@@ -32,9 +43,26 @@ API поднимется на `http://localhost:5000`.
 
 ### Фронтенд (React + Vite)
 
+1. Установи зависимости:
+
 ```bash
 cd client
 npm install
+```
+
+2. Настрой переменные окружения (опционально, для локальной разработки):
+
+```bash
+# Скопируй пример файла
+cp .env.example .env.local
+
+# Для локальной разработки .env.local можно оставить пустым
+# (Vite будет использовать proxy к http://localhost:5000)
+```
+
+3. Запусти dev-сервер:
+
+```bash
 npm run dev -- --host
 ```
 

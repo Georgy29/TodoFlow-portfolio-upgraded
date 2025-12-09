@@ -3,8 +3,10 @@ from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required, get_jwt_identity
 )
+from werkzeug.exceptions import BadRequest
+
 from datetime import timedelta
-import os
+import os, re
 
 from .db import db
 from .models import User, Todo
@@ -12,11 +14,16 @@ from .models import User, Todo
 def create_app():
     app = Flask(__name__)
 
+    # --- JWT secret handling ---
+    jwt_secret = os.environ.get("JWT_SECRET_KEY","dev-secret-change-me")
+    if os.environ.get("FLASK_ENV") == "production":
+        if not jwt_secret or jwt_secret == "dev-secret-change-me":
+            raise ValueError("JWT_SECRET_KEY must be set in production")
+        
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todos.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "dev-secret-change-me")
+    app.config["JWT_SECRET_KEY"] = jwt_secret
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=4)
-
     frontend_origin = os.environ.get("FRONTEND_ORIGIN")
     if frontend_origin:
         CORS(app, origins=[frontend_origin])
@@ -26,9 +33,26 @@ def create_app():
     db.init_app(app)
     JWTManager(app)
 
+    @app.errorhandler(Exception)
+    def handle_error(e):
+        db.session.rollback()
+        # Log the error for debugging (server-side)
+        print(f"Error: {e}")  # Only you see this
+        # Return generic message to user
+        return jsonify({"error": "Internal server error"}), 500
+
     with app.app_context():
         db.create_all()
 
+    def validate_password(password: str) -> str | None:
+        if len(password) < 8:
+            return "password must be at least 8 characters"
+        if not re.search(r"[A-Za-z]", password):
+            return "password must contain at least one letter"
+        if not re.search(r"\d", password):
+            return "password must contain at least one number"
+        return None   
+    
     # --- health ---
     @app.get("/api/ping")
     def ping():
@@ -37,11 +61,19 @@ def create_app():
     # --- auth ---
     @app.post("/api/auth/register")
     def register():
-        data = request.get_json(force=True) or {}
+        try:
+            data = request.get_json(force=True) or {}
+        except BadRequest:
+            return jsonify({"error" : "Invalid JSON"}), 400
         email = (data.get("email") or "").strip().lower()
         password = (data.get("password") or "").strip()
         if not email or not password:
             return jsonify({"error": "email and password are required"}), 400
+        
+        msg = validate_password(password)
+        if msg:
+            return jsonify({"error": msg}), 400
+        
         if User.query.filter_by(email=email).first():
             return jsonify({"error": "email already registered"}), 409
         user = User(email=email)
@@ -53,7 +85,10 @@ def create_app():
 
     @app.post("/api/auth/login")
     def login():
-        data = request.get_json(force=True) or {}
+        try:
+            data = request.get_json(force=True) or {}
+        except BadRequest:
+            return jsonify({"error" : "Invalid JSON"}), 400
         email = (data.get("email") or "").strip().lower()
         password = (data.get("password") or "").strip()
         if not email or not password:
@@ -69,12 +104,14 @@ def create_app():
     def me():
         uid = int(get_jwt_identity())
         user = db.session.get(User, uid)
+        if not user:
+            return jsonify({"error" : "not found"}), 404    
         return jsonify({"user": user.to_dict()})
 
     # --- todos (protected) ---
     @app.get("/api/todos")
     @jwt_required()
-    def get_todos():
+    def get_todos():    
         uid = int(get_jwt_identity())
         items = Todo.query.filter_by(user_id=uid).order_by(Todo.id.asc()).all()
         return jsonify([t.to_dict() for t in items])
@@ -83,7 +120,10 @@ def create_app():
     @jwt_required()
     def add_todo():
         uid = int(get_jwt_identity())
-        data = request.get_json(force=True) or {}
+        try:
+            data = request.get_json(force=True) or {}
+        except BadRequest:
+            return jsonify({"error" : "Invalid JSON"}), 400
         title = (data.get("title") or "").strip()
         if not title:
             return jsonify({"error": "title is required"}), 400

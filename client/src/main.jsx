@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { getToken } from './api'
-
+import './index.css'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TodosPage from './pages/TodosPage'
