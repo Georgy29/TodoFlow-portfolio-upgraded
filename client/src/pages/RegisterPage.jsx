@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { apiFetch, setToken } from '../api'
 import Navbar from '../components/Navbar'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -9,22 +9,14 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const { register } = useAuth()
 
   const onSubmit = async e => {
     e.preventDefault()
     setError('')
     setLoading(true)
     try {
-      const r = await apiFetch('/api/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
-      })
-      const data = await r.json()
-      if (!r.ok) {
-        setError(data.error || 'Register failed')
-        return
-      }
-      setToken(data.token)
+      await register(email, password)
       navigate('/todos', { replace: true })
     } catch (err) {
       setError(String(err.message))

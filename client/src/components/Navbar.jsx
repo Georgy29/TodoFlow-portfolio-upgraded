@@ -1,12 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { getToken, setToken } from '../api'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Navbar() {
   const navigate = useNavigate()
-  const authed = !!getToken()
+  const { user, logout } = useAuth()
+  const authed = !!user
 
-  const logout = () => {
-    setToken('')
+  const handleLogout = () => {
+    logout()
     navigate('/login', { replace: true })
   }
 
@@ -27,7 +28,7 @@ export default function Navbar() {
           <Link to="/register">Register</Link>
         </>
       ) : (
-        <button onClick={logout} style={{ marginLeft: 'auto' }}>
+        <button onClick={handleLogout} style={{ marginLeft: 'auto' }}>
           Logout
         </button>
       )}
