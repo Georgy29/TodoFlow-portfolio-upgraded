@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../contexts/AuthContext'
+import toast from 'react-hot-toast'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -18,8 +19,9 @@ export default function RegisterPage() {
     try {
       await register(email, password)
       navigate('/todos', { replace: true })
+      toast.success('Registered successfully')
     } catch (err) {
-      setError(String(err.message))
+      toast.error(err.message || 'Registration failed')
     } finally {
       setLoading(false)
     }

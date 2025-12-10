@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import LoginForm from '../components/LoginForm'
 import { useAuth } from '../contexts/AuthContext'
+import toast from 'react-hot-toast'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -15,9 +16,10 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(email, password)
+      toast.success('Logged in successfully')
       navigate('/todos', { replace: true })
     } catch (err) {
-      setError(String(err.message))
+      toast.error(err.message || 'Login failed')
     } finally {
       setLoading(false)
     }

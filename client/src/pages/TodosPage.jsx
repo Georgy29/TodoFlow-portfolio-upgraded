@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { apiFetch } from '../api'
 import Navbar from '../components/Navbar'
 import TodoList from '../components/TodoList'
+import toast from 'react-hot-toast'
 
 export default function TodosPage() {
   const [msg, setMsg] = useState('...')
@@ -47,31 +48,34 @@ export default function TodosPage() {
       body: JSON.stringify({ title }),
     })
     if (!res.ok) {
-      alert('Failed to add')
+      toast.error('Failed to add todo')
       return
     }
     const created = await res.json()
     setTodos(v => [...v, created])
     setTitle('')
+    toast.success('Todo added')
   }
 
   const toggle = async id => {
     const r = await apiFetch(`/api/todos/${id}`, { method: 'PATCH' })
     if (!r.ok) {
-      alert('Failed to toggle')
+      toast.error('Failed to toggle todo')
       return
     }
     const upd = await r.json()
     setTodos(v => v.map(t => (t.id === id ? upd : t)))
+    toast.success('')
   }
 
   const remove = async id => {
     const r = await apiFetch(`/api/todos/${id}`, { method: 'DELETE' })
     if (!r.ok) {
-      alert('Failed to delete')
+      toast.error('Failed to delete todo')
       return
     }
     setTodos(v => v.filter(t => t.id !== id))
+    toast.success('Todo deleted')
   }
 
   const computedTodos = useMemo(() => {

@@ -5,7 +5,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TodosPage from './pages/TodosPage'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
-
+import { Toaster } from 'react-hot-toast'
 // Export for fast refresh
 export function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -35,5 +35,11 @@ createRoot(document.getElementById('root')).render(
         <Route path="*" element={<Navigate to="/todos" replace />} />
       </Routes>
     </BrowserRouter>
+    <Toaster
+      position="top-right"
+      toastOptions={{
+        style: { fontFamily: 'system-ui, sans-serif' },
+      }}
+    />
   </AuthProvider>
 )
