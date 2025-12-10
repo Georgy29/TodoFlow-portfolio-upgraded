@@ -42,7 +42,7 @@ export default function RegisterPage() {
         }}
       >
         <h1>Register</h1>
-        <ErrorMessage>{error}</ErrorMessage>
+        <ErrorMessage onDismiss={() => setError('')}>{error}</ErrorMessage>
 
         <form onSubmit={onSubmit} style={{ margin: '16px 0' }}>
           <input

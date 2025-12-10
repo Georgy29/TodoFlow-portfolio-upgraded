@@ -1,5 +1,5 @@
 
-export default function ErrorMessage({ children }) {
+export default function ErrorMessage({ children, onDismiss }) {
   if (!children) return null
   return (
     <div
@@ -10,9 +10,30 @@ export default function ErrorMessage({ children }) {
         backgroundColor: '#ffe5e5',
         color: '#b00020',
         fontSize: 14,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 8,
       }}
     >
-      {children}
+      <span>{children}</span>
+      {onDismiss && (
+        <button
+          type="button"
+          onClick={onDismiss}
+          aria-label="Dismiss error"
+          style={{
+            border: 'none',
+            background: 'transparent',
+            color: '#b00020',
+            fontSize: 16,
+            cursor: 'pointer',
+            padding: 0,
+          }}
+        >
+          ×
+        </button>
+      )}
     </div>
   )
 }

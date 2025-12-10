@@ -172,7 +172,9 @@ export default function TodosPage() {
         </form>
 
         {loading && <p>Loading…</p>}
-        <ErrorMessage>{error && `Error: ${error}`}</ErrorMessage>
+        <ErrorMessage onDismiss={() => setError('')}>
+          {error && `Error: ${error}`}
+        </ErrorMessage>
 
 
         <TodoList
