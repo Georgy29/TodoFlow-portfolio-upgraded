@@ -3,6 +3,7 @@ import { apiFetch } from '../api'
 import Navbar from '../components/Navbar'
 import TodoList from '../components/TodoList'
 import toast from 'react-hot-toast'
+import ErrorMessage from '../components/ErrorMessage'
 
 export default function TodosPage() {
   const [msg, setMsg] = useState('...')
@@ -171,7 +172,8 @@ export default function TodosPage() {
         </form>
 
         {loading && <p>Loading…</p>}
-        {error && <p style={{ color: 'crimson' }}>Error: {error}</p>}
+        <ErrorMessage>{error && `Error: ${error}`}</ErrorMessage>
+
 
         <TodoList
           items={computedTodos}

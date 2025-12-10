@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ErrorMessage from './ErrorMessage'
 
 export default function LoginForm({ onSubmit = () => {}, loading = false, error = '' }) {
   const [email, setEmail] = useState('')
@@ -38,11 +39,7 @@ export default function LoginForm({ onSubmit = () => {}, loading = false, error 
         />
       </label>
 
-      {error && (
-        <p style={{ color: 'crimson', margin: '8px 0' }} aria-live="polite">
-          {error}
-        </p>
-      )}
+      <ErrorMessage>{error}</ErrorMessage>
 
       <button type="submit" disabled={!canSubmit} style={{ padding: 8 }}>
         {loading ? 'Logging in…' : 'Log in'}

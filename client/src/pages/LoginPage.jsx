@@ -19,7 +19,9 @@ export default function LoginPage() {
       toast.success('Logged in successfully')
       navigate('/todos', { replace: true })
     } catch (err) {
-      toast.error(err.message || 'Login failed')
+      const msg = err?.message || 'Login failed'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }
@@ -37,7 +39,6 @@ export default function LoginPage() {
         }}
       >
         <h1>Sign in</h1>
-
         <LoginForm onSubmit={handleLogin} loading={loading} error={error} />
 
         <p style={{ marginTop: 12 }}>

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../contexts/AuthContext'
 import toast from 'react-hot-toast'
+import ErrorMessage from '../components/ErrorMessage'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -21,7 +22,9 @@ export default function RegisterPage() {
       navigate('/todos', { replace: true })
       toast.success('Registered successfully')
     } catch (err) {
-      toast.error(err.message || 'Registration failed')
+      const msg = err?.message || 'Registration failed'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }
@@ -39,7 +42,7 @@ export default function RegisterPage() {
         }}
       >
         <h1>Register</h1>
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
+        <ErrorMessage>{error}</ErrorMessage>
 
         <form onSubmit={onSubmit} style={{ margin: '16px 0' }}>
           <input
