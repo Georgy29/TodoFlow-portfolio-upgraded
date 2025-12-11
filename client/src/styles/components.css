@@ -103,7 +103,10 @@ button {
   font-family: inherit;
   background-color: var(--color-surface);
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
     transform 0.05s ease;
 }
 
@@ -114,6 +117,11 @@ button:hover {
 button:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .btn-primary {
