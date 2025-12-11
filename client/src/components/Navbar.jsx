@@ -12,15 +12,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav
-      style={{
-        display: 'flex',
-        gap: 12,
-        alignItems: 'center',
-        padding: '8px 0',
-        borderBottom: '1px solid #eee',
-      }}
-    >
+    <nav className="navbar">
       <Link to="/todos">Todos</Link>
       {!authed ? (
         <>
@@ -28,7 +20,7 @@ export default function Navbar() {
           <Link to="/register">Register</Link>
         </>
       ) : (
-        <button onClick={handleLogout} style={{ marginLeft: 'auto' }}>
+        <button onClick={handleLogout} className="navbar__spacer">
           Logout
         </button>
       )}

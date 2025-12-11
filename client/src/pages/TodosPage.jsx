@@ -115,17 +115,10 @@ export default function TodosPage() {
   return (
     <>
       <Navbar />
-      <div
-        style={{
-          padding: 24,
-          fontFamily: 'system-ui, sans-serif',
-          maxWidth: 640,
-          margin: '0 auto',
-        }}
-      >
-        <h1>Mini Full-Stack (JWT)</h1>
+      <div className="page">
+        <h1 className="page-title">Mini Full-Stack (JWT)</h1>
 
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className="todo-toolbar">
           <button onClick={ping}>Ping API</button>
           <p>Response: {msg}</p>
 
@@ -134,48 +127,45 @@ export default function TodosPage() {
           </button>
 
           {/* панель фильтров справа */}
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+          <div className="todo-toolbar__filters">
             <button
               onClick={() => setFilter('all')}
               aria-pressed={filter === 'all'}
-              style={{ fontWeight: filter === 'all' ? 700 : 400 }}
+              className={filter === 'all' ? 'todo-filters__button--active' : ''}
             >
               All ({todos.length})
             </button>
             <button
               onClick={() => setFilter('active')}
               aria-pressed={filter === 'active'}
-              style={{ fontWeight: filter === 'active' ? 700 : 400 }}
+              className={filter === 'active' ? 'todo-filters__button--active' : ''}
             >
               Active ({activeCount})
             </button>
             <button
               onClick={() => setFilter('done')}
               aria-pressed={filter === 'done'}
-              style={{ fontWeight: filter === 'done' ? 700 : 400 }}
+              className={filter === 'done' ? 'todo-filters__button--active' : ''}
             >
               Done ({doneCount})
             </button>
           </div>
         </div>
 
-        <form onSubmit={addTodo} style={{ margin: '16px 0' }}>
+        <form onSubmit={addTodo} className="todo-input-row">
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="New todo..."
-            style={{ padding: 8, width: '70%' }}
+            className="input"
           />
-          <button type="submit" disabled={!title.trim()} style={{ padding: 8, marginLeft: 8 }}>
+          <button type="submit" disabled={!title.trim()} className="btn-primary">
             Add
           </button>
         </form>
 
         {loading && <p>Loading…</p>}
-        <ErrorMessage onDismiss={() => setError('')}>
-          {error && `Error: ${error}`}
-        </ErrorMessage>
-
+        <ErrorMessage onDismiss={() => setError('')}>{error && `Error: ${error}`}</ErrorMessage>
 
         <TodoList
           items={computedTodos}

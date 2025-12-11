@@ -1,32 +1,18 @@
 // client/src/components/TodoList.jsx
 export default function TodoList({ items, onToggle, onRemove, emptyText }) {
   if (!items.length) {
-    return <p style={{ color: '#666' }}>{emptyText ?? 'No tasks'}</p>
+    return <p className="todo-empty">{emptyText ?? 'No tasks'}</p>
   }
 
   return (
-    <ul style={{ listStyle: 'none', padding: 0 }}>
+    <ul className="todo-list">
       {items.map(t => (
-        <li
-          key={t.id}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            borderBottom: '1px solid #eee',
-            padding: '8px 0',
-          }}
-        >
+        <li key={t.id} className="todo-item">
           <input type="checkbox" checked={t.done} onChange={() => onToggle(t.id)} />
-          <span
-            style={{
-              flex: 1,
-              textDecoration: t.done ? 'line-through' : 'none',
-            }}
-          >
-            {t.title}
-          </span>
-          <button onClick={() => onRemove(t.id)}>Delete</button>
+          <span className={t.done ? 'todo-title todo-title--done' : 'todo-title'}>{t.title}</span>
+          <button onClick={() => onRemove(t.id)} className="btn-danger">
+            Delete
+          </button>
         </li>
       ))}
     </ul>

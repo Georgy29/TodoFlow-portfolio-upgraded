@@ -33,44 +33,39 @@ export default function RegisterPage() {
   return (
     <>
       <Navbar />
-      <div
-        style={{
-          padding: 24,
-          fontFamily: 'system-ui, sans-serif',
-          maxWidth: 640,
-          margin: '0 auto',
-        }}
-      >
-        <h1>Register</h1>
+      <div className="page">
+        <h1 className="page-title">Register</h1>
         <ErrorMessage onDismiss={() => setError('')}>{error}</ErrorMessage>
 
-        <form onSubmit={onSubmit} style={{ margin: '16px 0' }}>
-          <input
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="Email"
-            type="email"
-            style={{ padding: 8, width: '70%' }}
-            autoComplete="username"
-          />
-          <input
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Password"
-            type="password"
-            style={{ padding: 8, width: '70%', display: 'block', marginTop: 8 }}
-            autoComplete="new-password"
-          />
-          <button
-            type="submit"
-            disabled={loading || !email || !password}
-            style={{ padding: 8, marginTop: 8 }}
-          >
+        <form onSubmit={onSubmit} className="auth-form">
+          <label class="form-label">
+            Email
+            <input
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="Email"
+              type="email"
+              className="input"
+              autoComplete="username"
+            />
+          </label>
+          <label className="form-label">
+            Password
+            <input
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="Password"
+              type="password"
+              className="input"
+              autoComplete="new-password"
+            />
+          </label>
+          <button type="submit" disabled={loading || !email || !password} className="btn-primary">
             {loading ? 'Registering…' : 'Register'}
           </button>
         </form>
 
-        <p>
+        <p className="page-subtle-link">
           Already got an account? <Link to="/login">Login</Link>
         </p>
       </div>

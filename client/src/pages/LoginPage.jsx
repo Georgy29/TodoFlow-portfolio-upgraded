@@ -30,18 +30,16 @@ export default function LoginPage() {
   return (
     <>
       <Navbar />
-      <div
-        style={{
-          padding: 24,
-          fontFamily: 'system-ui, sans-serif',
-          maxWidth: 640,
-          margin: '0 auto',
-        }}
-      >
-        <h1>Sign in</h1>
-        <LoginForm onSubmit={handleLogin} loading={loading} error={error} />
+      <div className="page">
+        <h1 className="page-title">Sign in</h1>
+        <LoginForm
+          onSubmit={handleLogin}
+          loading={loading}
+          error={error}
+          onClearError={() => setError('')}
+        />
 
-        <p style={{ marginTop: 12 }}>
+        <p className="page-subtle-link">
           No account? <Link to="/register">Click to register</Link>
         </p>
       </div>

@@ -18,35 +18,37 @@ export default function LoginForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 360 }}>
-      <label style={{ display: 'block', marginBottom: 8 }}>
+    <form onSubmit={handleSubmit} className="auth-form">
+      <label className="form-label">
         Email
         <input
+          placeholder='Email'
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
           autoFocus
           autoComplete="username"
-          style={{ display: 'block', width: '100%', padding: 8, marginTop: 4 }}
+          className="input"
         />
       </label>
 
-      <label style={{ display: 'block', marginBottom: 8 }}>
+      <label className="form-label">
         Password
         <input
+          placeholder='Password'
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
           autoComplete="current-password"
-          style={{ display: 'block', width: '100%', padding: 8, marginTop: 4 }}
+          className="input"
         />
       </label>
 
       <ErrorMessage onDismiss={onClearError}>{error}</ErrorMessage>
 
-      <button type="submit" disabled={!canSubmit} style={{ padding: 8 }}>
+      <button type="submit" disabled={!canSubmit} className="btn-primary">
         {loading ? 'Logging in…' : 'Log in'}
       </button>
     </form>
