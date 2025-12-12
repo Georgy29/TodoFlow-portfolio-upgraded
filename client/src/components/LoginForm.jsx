@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ErrorMessage from './ErrorMessage'
+import LoadingDots from './LoadingDots'
 
 export default function LoginForm({
   onSubmit = () => {},
@@ -22,7 +23,7 @@ export default function LoginForm({
       <label className="form-label">
         Email
         <input
-          placeholder='Email'
+          placeholder="Email"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
@@ -36,7 +37,7 @@ export default function LoginForm({
       <label className="form-label">
         Password
         <input
-          placeholder='Password'
+          placeholder="Password"
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -47,9 +48,8 @@ export default function LoginForm({
       </label>
 
       <ErrorMessage onDismiss={onClearError}>{error}</ErrorMessage>
-
       <button type="submit" disabled={!canSubmit} className="btn-primary">
-        {loading ? 'Logging in…' : 'Log in'}
+        {loading ? <LoadingDots label="Logging in" /> : 'Log in'}
       </button>
     </form>
   )

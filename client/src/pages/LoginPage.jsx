@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import Navbar from '../components/Navbar'
-import LoginForm from '../components/LoginForm'
-import { useAuth } from '../contexts/AuthContext'
 import toast from 'react-hot-toast'
+import { useNavigate, Link } from 'react-router-dom'
+import LoginForm from '../components/LoginForm'
+import Navbar from '../components/Navbar'
+
+import { useAuth } from '../contexts/AuthContext'
 
 export default function LoginPage() {
   const navigate = useNavigate()

@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
 import { apiFetch } from '../api'
+import ErrorMessage from '../components/ErrorMessage'
+import LoadingSpinner from '../components/LoadingSpinner'
+import LoadingDots from '../components/LoadingDots'
 import Navbar from '../components/Navbar'
 import TodoList from '../components/TodoList'
-import toast from 'react-hot-toast'
-import ErrorMessage from '../components/ErrorMessage'
+
 
 export default function TodosPage() {
   const [msg, setMsg] = useState('...')
@@ -12,6 +15,7 @@ export default function TodosPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState('all') // all | active | done
+  const [saving, setSaving] = useState(false)
 
   const activeCount = useMemo(() => todos.filter(t => !t.done).length, [todos])
   const doneCount = todos.length - activeCount
@@ -43,40 +47,53 @@ export default function TodosPage() {
 
   const addTodo = async e => {
     e.preventDefault()
-    if (!title.trim()) return
-    const res = await apiFetch('/api/todos', {
-      method: 'POST',
-      body: JSON.stringify({ title }),
-    })
-    if (!res.ok) {
+    if (!title.trim() || saving) return
+    setSaving(true)
+    try {
+      const res = await apiFetch('/api/todos', {
+        method: 'POST',
+        body: JSON.stringify({ title }),
+      })
+      const created = await res.json()
+      setTodos(v => [...v, created])
+      setTitle('')
+      toast.success('Todo added')
+    } catch {
       toast.error('Failed to add todo')
       return
+    } finally {
+      setSaving(false)
     }
-    const created = await res.json()
-    setTodos(v => [...v, created])
-    setTitle('')
-    toast.success('Todo added')
   }
 
   const toggle = async id => {
-    const r = await apiFetch(`/api/todos/${id}`, { method: 'PATCH' })
-    if (!r.ok) {
+    if (saving) return
+    setSaving(true)
+    try {
+      const r = await apiFetch(`/api/todos/${id}`, { method: 'PATCH' })
+      if (!r.ok) throw new Error()
+      const upd = await r.json()
+      setTodos(v => v.map(t => (t.id === id ? upd : t)))
+    } catch {
       toast.error('Failed to toggle todo')
-      return
+    } finally {
+      setSaving(false)
     }
-    const upd = await r.json()
-    setTodos(v => v.map(t => (t.id === id ? upd : t)))
-    toast.success('')
   }
 
   const remove = async id => {
-    const r = await apiFetch(`/api/todos/${id}`, { method: 'DELETE' })
-    if (!r.ok) {
+    if (saving) return
+    setSaving(true)
+    try {
+      const r = await apiFetch(`/api/todos/${id}`, { method: 'DELETE' })
+      if (!r.ok) throw new Error()
+      setTodos(v => v.filter(t => t.id !== id))
+      toast.success('Todo deleted')
+    } catch {
       toast.error('Failed to delete todo')
-      return
+    } finally {
+      setSaving(false)
     }
-    setTodos(v => v.filter(t => t.id !== id))
-    toast.success('Todo deleted')
   }
 
   const computedTodos = useMemo(() => {
@@ -87,28 +104,30 @@ export default function TodosPage() {
 
   // бонус: отметить все как выполненные (клиентом по одному PATCH)
   const markAllDone = async () => {
+    if (saving) return
+    setSaving(true)
     setError('')
     const pending = todos.filter(t => !t.done)
 
-    const results = await Promise.allSettled(
-      pending.map(t =>
-        apiFetch(`/api/todos/${t.id}`, { method: 'PATCH' }).then(async r => {
-          if (!r.ok) throw new Error(`HTTP ${r.status} for id ${t.id}`)
-          return r.json() // обновлённый todo
-        })
+    try {
+      const results = await Promise.allSettled(
+        pending.map(t =>
+          apiFetch(`/api/todos/${t.id}`, { method: 'PATCH' }).then(async r => {
+            if (!r.ok) throw new Error(`HTTP ${r.status} for id ${t.id}`)
+            return r.json()
+          })
+        )
       )
-    )
 
-    // успешные обновления
-    const updated = results.filter(r => r.status === 'fulfilled').map(r => r.value) // массив обновлённых todo
+      const updated = results.filter(r => r.status === 'fulfilled').map(r => r.value)
+      setTodos(prev => prev.map(x => updated.find(u => u.id === x.id) || x))
 
-    // применяем только удачные
-    setTodos(prev => prev.map(x => updated.find(u => u.id === x.id) || x))
-
-    // если были провалы — покажем, сколько
-    const failed = results.filter(r => r.status === 'rejected')
-    if (failed.length) {
-      setError(`Couldn't update: ${failed.length} из ${results.length}`)
+      const failed = results.filter(r => r.status === 'rejected')
+      if (failed.length) {
+        setError(`Couldn't update: ${failed.length} из ${results.length}`)
+      }
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -122,11 +141,10 @@ export default function TodosPage() {
           <button onClick={ping}>Ping API</button>
           <p>Response: {msg}</p>
 
-          <button onClick={markAllDone} disabled={!activeCount}>
-            Mark all done
+          <button onClick={markAllDone} disabled={!activeCount || saving}>
+            {saving ? <LoadingDots label="Working" /> : 'Mark all done'}
           </button>
 
-          {/* панель фильтров справа */}
           <div className="todo-toolbar__filters">
             <button
               onClick={() => setFilter('all')}
@@ -159,12 +177,12 @@ export default function TodosPage() {
             placeholder="New todo..."
             className="input"
           />
-          <button type="submit" disabled={!title.trim()} className="btn-primary">
-            Add
+          <button type="submit" disabled={!title.trim() || saving} className="btn-primary">
+            {saving ? <LoadingDots label="Adding" /> : 'Add'}
           </button>
         </form>
 
-        {loading && <p>Loading…</p>}
+        {loading && <LoadingSpinner label="Loading todos" />}
         <ErrorMessage onDismiss={() => setError('')}>{error && `Error: ${error}`}</ErrorMessage>
 
         <TodoList

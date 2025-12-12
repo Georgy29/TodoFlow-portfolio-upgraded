@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { useNavigate, Link } from 'react-router-dom'
+import ErrorMessage from '../components/ErrorMessage'
+import LoadingDots from '../components/LoadingDots'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../contexts/AuthContext'
-import toast from 'react-hot-toast'
-import ErrorMessage from '../components/ErrorMessage'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -38,7 +39,7 @@ export default function RegisterPage() {
         <ErrorMessage onDismiss={() => setError('')}>{error}</ErrorMessage>
 
         <form onSubmit={onSubmit} className="auth-form">
-          <label class="form-label">
+          <label className="form-label">
             Email
             <input
               value={email}
@@ -61,7 +62,7 @@ export default function RegisterPage() {
             />
           </label>
           <button type="submit" disabled={loading || !email || !password} className="btn-primary">
-            {loading ? 'Registering…' : 'Register'}
+            {loading ? <LoadingDots label="Registering" /> : 'Register'}
           </button>
         </form>
 
