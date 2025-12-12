@@ -9,6 +9,7 @@ api/instance/
 # Node
 client/node_modules/
 client/dist/
+todos.db
 # Environment files (but keep .env.example)
 .env
 .env.local
