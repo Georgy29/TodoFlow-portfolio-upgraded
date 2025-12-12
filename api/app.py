@@ -6,7 +6,7 @@ from flask_jwt_extended import (
 from werkzeug.exceptions import BadRequest
 
 from datetime import timedelta
-import os, re
+import os, re, html
 
 from .db import db
 from .models import User, Todo
@@ -44,6 +44,16 @@ def create_app():
     with app.app_context():
         db.create_all()
 
+    EMAIL_REGEX = re.compile(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    )
+    
+    def validate_email(email: str) -> str | None:
+        if not EMAIL_REGEX.fullmatch(email):
+            return 'invalid email format'
+        return None
+        
+    
     def validate_password(password: str) -> str | None:
         if len(password) < 8:
             return "password must be at least 8 characters"
@@ -52,6 +62,9 @@ def create_app():
         if not re.search(r"\d", password):
             return "password must contain at least one number"
         return None   
+    
+    def sanitize_title(raw: str) -> str:
+        return html.escape(raw.strip())
     
     # --- health ---
     @app.get("/api/ping")
@@ -69,6 +82,10 @@ def create_app():
         password = (data.get("password") or "").strip()
         if not email or not password:
             return jsonify({"error": "email and password are required"}), 400
+        
+        email_error = validate_email(email)
+        if email_error:
+             return jsonify({"error": email_error}), 400
         
         msg = validate_password(password)
         if msg:
@@ -93,6 +110,10 @@ def create_app():
         password = (data.get("password") or "").strip()
         if not email or not password:
             return jsonify({"error": "email and password are required"}), 400
+        email_error = validate_email(email)
+        if email_error:
+            return jsonify({"error": email_error}), 400
+        
         user = User.query.filter_by(email=email).first()
         if not user or not user.check_password(password):
             return jsonify({"error": "invalid credentials"}), 401
@@ -116,6 +137,8 @@ def create_app():
         items = Todo.query.filter_by(user_id=uid).order_by(Todo.id.asc()).all()
         return jsonify([t.to_dict() for t in items])
 
+
+
     @app.post("/api/todos")
     @jwt_required()
     def add_todo():
@@ -124,9 +147,17 @@ def create_app():
             data = request.get_json(force=True) or {}
         except BadRequest:
             return jsonify({"error" : "Invalid JSON"}), 400
-        title = (data.get("title") or "").strip()
-        if not title:
-            return jsonify({"error": "title is required"}), 400
+        raw_title = (data.get("title") or "").strip()
+        if not raw_title:
+            return jsonify({"error": "TODO title is required"}), 400
+        
+        # Escape HTML to prevent XSS
+        title = sanitize_title(raw_title)
+        
+        if len(title) > 100:
+            return jsonify({"error":"title too long"}), 400
+        
+        
         todo = Todo(title=title, done=False, user_id=uid)
         db.session.add(todo)
         db.session.commit()
