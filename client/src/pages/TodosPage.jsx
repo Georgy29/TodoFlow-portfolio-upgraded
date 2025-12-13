@@ -2,11 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { apiFetch } from '../api'
 import ErrorMessage from '../components/ErrorMessage'
-import LoadingSpinner from '../components/LoadingSpinner'
 import LoadingDots from '../components/LoadingDots'
+import LoadingSpinner from '../components/LoadingSpinner'
 import Navbar from '../components/Navbar'
 import TodoList from '../components/TodoList'
-
 
 export default function TodosPage() {
   const [msg, setMsg] = useState('...')

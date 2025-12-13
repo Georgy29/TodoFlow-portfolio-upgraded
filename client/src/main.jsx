@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client'
+import { Toaster } from 'react-hot-toast'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
 import LoadingSpinner from './components/LoadingSpinner'
@@ -6,7 +7,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TodosPage from './pages/TodosPage'
-import { Toaster } from 'react-hot-toast'
+
 // Export for fast refresh
 export function PrivateRoute({ children }) {
   const { user, loading } = useAuth()

@@ -20,8 +20,7 @@ export default function RegisterPage() {
   const emailTrimmed = email.trim()
   const emailValid = !emailTrimmed || EMAIL_REGEX.test(emailTrimmed)
 
-  const passwordValid =
-    password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password)
+  const passwordValid = password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password)
 
   const showEmailError = touched.email && !emailValid
   const showPasswordError = touched.password && !passwordValid

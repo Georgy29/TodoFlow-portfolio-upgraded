@@ -4,6 +4,7 @@ import LoadingDots from './LoadingDots'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+
 export default function LoginForm({
   onSubmit = () => {},
   loading = false,
@@ -16,7 +17,7 @@ export default function LoginForm({
 
   const emailTrimmed = email.trim()
   const emailValid = !emailTrimmed || EMAIL_REGEX.test(emailTrimmed)
-  const passwordValid = password.length >= 8
+  const passwordValid = password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password)
 
   const showEmailError = touched.email && !emailValid
   const showPasswordError = touched.password && !passwordValid
@@ -74,7 +75,7 @@ export default function LoginForm({
         />
         {showPasswordError ? (
           <div className="field-error" id={passwordErrorId}>
-            Password must be at least 8 characters
+            Password must have 8+ characters with a letter and number
           </div>
         ) : null}
       </label>
