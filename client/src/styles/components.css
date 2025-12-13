@@ -136,6 +136,22 @@
   border-color: var(--color-primary);
 }
 
+.input--error {
+  border-color: var(--color-danger);
+}
+
+.input--error:focus {
+  outline: 2px solid var(--color-danger-soft);
+  border-color: var(--color-danger);
+}
+
+.field-error {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  line-height: 1.25;
+  color: var(--color-danger);
+}
+
 /* Buttons */
 
 button {
