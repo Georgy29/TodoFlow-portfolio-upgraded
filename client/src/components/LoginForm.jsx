@@ -4,7 +4,6 @@ import LoadingDots from './LoadingDots'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-
 export default function LoginForm({
   onSubmit = () => {},
   loading = false,

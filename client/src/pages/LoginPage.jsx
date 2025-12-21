@@ -41,7 +41,10 @@ export default function LoginPage() {
         />
 
         <p className="page-subtle-link">
-          No account? <Link to="/register">Click to register</Link>
+          No account?{' '}
+          <Link to="/register" data-discover="true" data-cursor-element-id="cursor-el-5">
+            Click to register
+          </Link>
         </p>
       </div>
     </>

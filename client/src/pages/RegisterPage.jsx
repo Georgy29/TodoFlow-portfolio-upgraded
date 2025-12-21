@@ -107,7 +107,10 @@ export default function RegisterPage() {
         </form>
 
         <p className="page-subtle-link">
-          Already got an account? <Link to="/login">Login</Link>
+          Already got an account?{' '}
+          <Link to="/login" data-discover="true" data-cursor-element-id="cursor-el-4">
+            Login
+          </Link>
         </p>
       </div>
     </>
