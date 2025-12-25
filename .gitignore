@@ -17,6 +17,4 @@ todos.db
 .env.development
 .vscode/
 
-# Documentation (local only, don't commit)
-ANALYSIS.md
-QUICK_START_PLAN.md
+
