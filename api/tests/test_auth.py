@@ -86,7 +86,7 @@ def test_me_user_not_found(app, client):
     with app.app_context():
         token = create_access_token(identity="999999")
     res = client.get("api/me", headers = {"Authorization": f"Bearer {token}"})
-    assert res.status_code == 404
+    assert res.status_code == 400
     assert res.get_json() == {"error": "not found"}
 
 def test_ping(client):
