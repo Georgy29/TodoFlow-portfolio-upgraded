@@ -15,6 +15,7 @@ export default function TodosPage() {
   const [error, setError] = useState('')
   const [filter, setFilter] = useState('all') // all | active | done
   const [saving, setSaving] = useState(false)
+  const [adding, setAdding] = useState(false)
 
   const activeCount = useMemo(() => todos.filter(t => !t.done).length, [todos])
   const doneCount = todos.length - activeCount
@@ -46,8 +47,8 @@ export default function TodosPage() {
 
   const addTodo = async e => {
     e.preventDefault()
-    if (!title.trim() || saving) return
-    setSaving(true)
+    if (!title.trim() || adding) return
+    setAdding(true)
     try {
       const res = await apiFetch('/api/todos', {
         method: 'POST',
@@ -61,7 +62,7 @@ export default function TodosPage() {
       toast.error('Failed to add todo')
       return
     } finally {
-      setSaving(false)
+      setAdding(false)
     }
   }
 
@@ -101,7 +102,6 @@ export default function TodosPage() {
     return todos
   }, [todos, filter])
 
-  // бонус: отметить все как выполненные (клиентом по одному PATCH)
   const markAllDone = async () => {
     if (saving) return
     setSaving(true)
@@ -177,7 +177,7 @@ export default function TodosPage() {
             className="input"
           />
           <button type="submit" disabled={!title.trim() || saving} className="btn-primary">
-            {saving ? <LoadingDots label="Adding" /> : 'Add'}
+            {adding ? <LoadingDots label="Adding" /> : 'Add'}
           </button>
         </form>
 
