@@ -1,6 +1,6 @@
-# Fullstack PingPong
+# TodoFlow (Flask + React)
 
-A small full-stack todo app with JWT authentication.
+A small full-stack todo app with JWT authentication and tests.
 
 - Backend: Flask (app factory + blueprints), SQLAlchemy, JWT
 - Frontend: React (Vite) + React Router
