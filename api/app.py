@@ -53,10 +53,9 @@ def create_app(test_config=None):
         return jsonify({"error": "Internal server error"}), 500
 
     # Avoid auto-creating tables during tests; for Postgres use Alembic migrations.
-    if (
-        not app.config.get("TESTING")
-        and app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite:")
-    ):
+    if not app.config.get("TESTING") and app.config[
+        "SQLALCHEMY_DATABASE_URI"
+    ].startswith("sqlite:"):
         with app.app_context():
             db.create_all()
 

@@ -41,6 +41,7 @@ def test_todos_crud_flow(client):
     assert lst2.status_code == 200
     assert lst2.get_json() == []
 
+
 def test_todo_requires_title(client):
     headers = _auth_headers(client)
     res = client.post("/api/todos", json={}, headers=headers)
