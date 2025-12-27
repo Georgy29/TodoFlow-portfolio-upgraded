@@ -1,0 +1,6 @@
+Alembic migrations live in this folder.
+
+Common commands (run from repo root):
+- `alembic -c api/alembic.ini upgrade head`
+- `alembic -c api/alembic.ini revision --autogenerate -m "message"`
+

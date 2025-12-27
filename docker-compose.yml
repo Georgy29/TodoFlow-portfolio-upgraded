@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pingpong
+      POSTGRES_PASSWORD: pingpong
+      POSTGRES_DB: pingpong
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pingpong -d pingpong"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg://pingpong:pingpong@db:5432/pingpong
+      JWT_SECRET_KEY: dev-secret-change-me
+      FRONTEND_ORIGIN: http://localhost:5173
+      FLASK_ENV: development
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./api:/app/api
+    command:
+      [
+        "sh",
+        "-c",
+        "alembic -c api/alembic.ini upgrade head && gunicorn -b 0.0.0.0:5000 'api.app:create_app()' --reload",
+      ]
+
+volumes:
+  postgres_data:
+

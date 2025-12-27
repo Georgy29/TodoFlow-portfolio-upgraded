@@ -1,0 +1,15 @@
+.git
+.gitignore
+.vscode
+
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+
+api/.venv
+api/instance
+
+client/node_modules
+client/dist
+

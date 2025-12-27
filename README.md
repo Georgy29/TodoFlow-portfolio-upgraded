@@ -28,9 +28,10 @@ cp .env.example .env.local
 # Отредактируй .env.local и добавь свои значения:
 # JWT_SECRET_KEY=your-secret-key-here
 # FRONTEND_ORIGIN=http://localhost:5173
+# DATABASE_URL=postgresql+psycopg://pingpong:pingpong@localhost:5432/pingpong
 ```
 
-3. Пересоздай БД (для dev):
+3. Пересоздай БД (SQLite, для dev):
 
 ```bash
 rm -f todos.db
@@ -40,6 +41,23 @@ cd ..
 python -m api.app
 ```
 API поднимется на `http://localhost:5000`.
+
+### Postgres + migrations (Docker Compose)
+
+Поднимает Postgres локально и применяет миграции Alembic.
+
+**Вариант A (самый простой): API + Postgres одной командой**
+```bash
+docker compose up --build
+```
+
+**Вариант B: только Postgres в Docker, API запускаешь локально**
+```bash
+docker compose up -d db
+export DATABASE_URL="postgresql+psycopg://pingpong:pingpong@localhost:5432/pingpong"
+alembic -c api/alembic.ini upgrade head
+python -m api.app
+```
 
 ### Фронтенд (React + Vite)
 
@@ -94,6 +112,7 @@ npm run dev -- --host
    - `PYTHON_VERSION=3.11`
    - `JWT_SECRET_KEY=<случайная строка>`
    - `FRONTEND_ORIGIN=https://<твой-netlify>.app`
+   - `DATABASE_URL=<postgres url>` (если используешь Postgres)
 4. После билда API доступен по адресу:  
    ```
    https://<your-app>.onrender.com/api/ping
