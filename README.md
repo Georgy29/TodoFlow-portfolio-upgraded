@@ -1,4 +1,4 @@
-# TodoFlow (Flask + React)
+# Upgraded TodoFlow (Flask + React)
 
 A small full-stack todo app with JWT authentication and tests.
 
