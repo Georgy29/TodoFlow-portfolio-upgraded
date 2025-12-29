@@ -31,7 +31,7 @@ export default function LoginPage() {
   return (
     <>
       <Navbar />
-      <div className="page">
+      <div className="page page--narrow">
         <h1 className="page-title">Sign in</h1>
         <LoginForm
           onSubmit={handleLogin}
