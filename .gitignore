@@ -16,10 +16,3 @@ todos.db
 .env.production
 .env.development
 .vscode/
-
-
-
-# Local notes
-ANALYSIS.md
-QUICK_START_PLAN.md
-Makefile
