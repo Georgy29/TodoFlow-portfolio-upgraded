@@ -18,3 +18,8 @@ todos.db
 .vscode/
 
 
+
+# Local notes
+ANALYSIS.md
+QUICK_START_PLAN.md
+Makefile
