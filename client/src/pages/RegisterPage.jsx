@@ -55,7 +55,7 @@ export default function RegisterPage() {
   return (
     <>
       <Navbar />
-      <div className="page">
+      <div className="page page--narrow">
         <h1 className="page-title">Register</h1>
         <ErrorMessage onDismiss={() => setError('')}>{error}</ErrorMessage>
 

@@ -127,11 +127,15 @@
 /* Forms & inputs */
 
 .auth-form {
-  margin: var(--spacing-md) 0;
+  margin: var(--spacing-md) auto;
   max-width: 360px;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+}
+
+.page--narrow {
+  max-width: 420px;
 }
 
 .form-label {
