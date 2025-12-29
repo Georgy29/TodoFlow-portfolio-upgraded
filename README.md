@@ -7,6 +7,15 @@ A small full-stack todo app with JWT authentication and tests.
 - DB: SQLite by default; Postgres via `DATABASE_URL`
 - Testing: pytest (backend), Vitest + Testing Library (frontend)
 
+## Demo
+
+- Live site (Netlify): `https://portfolio-todo-georgy29.netlify.app`
+- API health (Render): `https://portfolio-todo-njj4.onrender.com/api/ping`
+
+## Screenshot (click the image)
+[![TodoFlow screenshot](docs/screenshot.png)](https://portfolio-todo-georgy29.netlify.app)
+
+
 ## What changed over time
 
 This repo started as a simple Flask todo app using a local SQLite file. Over time, I added:
@@ -123,5 +132,5 @@ docker compose exec db psql -U pingpong -d pingpong -c "\\dt"
 ## Deployment notes
 
 - Backend: Render (run command: `gunicorn api.app:create_app()`)
-- Frontend: Netlify/Vercel
+- Frontend: Netlify
 - For persistence in production, use managed Postgres and set `DATABASE_URL`.

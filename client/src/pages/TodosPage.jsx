@@ -8,7 +8,7 @@ import Navbar from '../components/Navbar'
 import TodoList from '../components/TodoList'
 
 export default function TodosPage() {
-  const [msg, setMsg] = useState('...')
+  const [apiStatus, setApiStatus] = useState('checking') // checking | online | offline
   const [todos, setTodos] = useState([])
   const [title, setTitle] = useState('')
   const [loading, setLoading] = useState(false)
@@ -20,10 +20,16 @@ export default function TodosPage() {
   const activeCount = useMemo(() => todos.filter(t => !t.done).length, [todos])
   const doneCount = todos.length - activeCount
 
-  const ping = async () => {
-    const res = await apiFetch('/api/ping')
-    const t = await res.text()
-    setMsg(t)
+  const checkApi = async () => {
+    setApiStatus('checking')
+    try {
+      const res = await apiFetch('/api/ping')
+      const t = await res.text()
+      if (res.ok && t.trim().toLowerCase() === 'pong') setApiStatus('online')
+      else setApiStatus('offline')
+    } catch {
+      setApiStatus('offline')
+    }
   }
 
   const loadTodos = async () => {
@@ -42,6 +48,7 @@ export default function TodosPage() {
   }
 
   useEffect(() => {
+    checkApi()
     loadTodos()
   }, [])
 
@@ -134,11 +141,22 @@ export default function TodosPage() {
     <>
       <Navbar />
       <div className="page">
-        <h1 className="page-title">Mini Full-Stack (JWT)</h1>
+        <h1 className="page-title">Todos</h1>
 
         <div className="todo-toolbar">
-          <button onClick={ping}>Ping API</button>
-          <p>Response: {msg}</p>
+          <span
+            className={`status-badge status-badge--${apiStatus}`}
+            role="status"
+            aria-live="polite"
+            title={apiStatus === 'offline' ? 'API is not reachable' : 'API is reachable'}
+          >
+            API:{' '}
+            {apiStatus === 'checking'
+              ? 'checking…'
+              : apiStatus === 'online'
+                ? 'online'
+                : 'offline'}
+          </span>
 
           <button onClick={markAllDone} disabled={!activeCount || saving}>
             {saving ? <LoadingDots label="Working" /> : 'Mark all done'}
