@@ -4,7 +4,13 @@ import os
 def normalize_database_url(url: str) -> str:
     # Some providers (and older guides) use "postgres://" which SQLAlchemy treats as invalid.
     if url.startswith("postgres://"):
-        return "postgresql://" + url.removeprefix("postgres://")
+        url = "postgresql://" + url.removeprefix("postgres://")
+
+    # If the URL doesn't specify a driver (e.g. "postgresql://..."), SQLAlchemy will
+    # default to psycopg2. This project uses psycopg v3, so prefer it explicitly.
+    if url.startswith("postgresql://"):
+        url = "postgresql+psycopg://" + url.removeprefix("postgresql://")
+
     return url
 
 
