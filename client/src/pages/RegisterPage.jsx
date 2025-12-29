@@ -57,6 +57,7 @@ export default function RegisterPage() {
       <Navbar />
       <div className="page page--narrow">
         <h1 className="page-title">Register</h1>
+        <p className="page-subtitle">Welcome to my TodoFlow portfolio demo.</p>
         <ErrorMessage onDismiss={() => setError('')}>{error}</ErrorMessage>
 
         <form onSubmit={onSubmit} className="auth-form">

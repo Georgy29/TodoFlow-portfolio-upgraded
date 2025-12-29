@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import logo from '../assets/logo.png'
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -13,16 +14,12 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <Link
-        to="/todos"
-        className="navbar__link"
-        data-discover="true"
-        data-cursor-element-id="cursor-el-3"
-      >
-        Todos
+      <Link to="/todos" className="navbar__brand" aria-label="TodoFlow home">
+        <img className="navbar__logo" src={logo} alt="" aria-hidden="true" />
+        <span>TodoFlow</span>
       </Link>
       {!authed ? (
-        <>
+        <div className="navbar__right">
           <Link
             to="/login"
             className="navbar__link"
@@ -39,11 +36,16 @@ export default function Navbar() {
           >
             Register
           </Link>
-        </>
+        </div>
       ) : (
-        <button onClick={handleLogout} className="navbar__button navbar__spacer">
-          Logout
-        </button>
+        <div className="navbar__right">
+          <span className="navbar__user" title={user?.email || ''}>
+            {user?.email || 'Signed in'}
+          </span>
+          <button onClick={handleLogout} className="navbar__button">
+            Logout
+          </button>
+        </div>
       )}
     </nav>
   )
