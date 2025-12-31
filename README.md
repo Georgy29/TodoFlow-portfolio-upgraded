@@ -12,7 +12,8 @@ A small full-stack todo app with JWT authentication and tests.
 - Live site (Netlify): `https://portfolio-todo-georgy29.netlify.app`
 - API health (Render): `https://portfolio-todo-njj4.onrender.com/api/ping`
 
-## Screenshot (click the image)
+## Screenshot (click an image) 
+#### p.s. registration might take a minute due to backend server starting
 [![TodoFlow screenshot](docs/screenshot.png)](https://portfolio-todo-georgy29.netlify.app)
 
 
